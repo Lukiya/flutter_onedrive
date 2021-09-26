@@ -120,7 +120,7 @@ class OneDrive {
     return null;
   }
 
-  Future<bool> push(String srcFilePath, String remotePath) async {
+  Future<bool> push(Uint8List bytes, String remotePath) async {
     final accessToken = await _tokenManager.getAccessToken();
     if (accessToken == null) {
       // No access token
@@ -128,9 +128,6 @@ class OneDrive {
     }
 
     try {
-      final file = File(srcFilePath);
-      final bytes = await file.readAsBytes();
-
       const int pageSize = 1024 * 1024; // page size
       final int maxPage = (bytes.length / pageSize.toDouble()).ceil(); // total pages
 

@@ -16,24 +16,24 @@ know whether this package might be useful for them.
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+* Download files from onedrive
+* Upload files to onedrive
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+```dart
+import 'package:flutter_onedrive/flutter_onedrive.dart';
+```
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. 
-
 ```dart
-const like = 'sample';
+final onedrive = OneDrive(callbackSchema: "your callback schema", clientID: "your client id");
+final success = await onedrive.connect();
+if (success) {
+  // Download files
+  final txtBytes = await onedrive.pull("/xxx/xxx.txt");
+  // Upload files
+  await onedrive.push(txtBytes!, "/xxx/xxx.txt");
+}
 ```
-
-## Additional information
-
-TODO: Tell users more about the package: where to find more information, how to 
-contribute to the package, how to file issues, what response they can expect 
-from the package authors, and more.
