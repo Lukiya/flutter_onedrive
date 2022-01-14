@@ -73,7 +73,7 @@ class OneDrive {
         'code': code,
       });
 
-// 从Response获取令牌
+//  read token from Response
       if (resp.statusCode == 200) {
         await _tokenManager.saveTokenResp(resp);
         return true;
