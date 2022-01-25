@@ -3,6 +3,11 @@
 * Download files from onedrive
 * Upload files to onedrive
 
+## References
+Read below documents before you start using this library:
+* https://docs.microsoft.com/en-us/onedrive/developer/rest-api/?view=odsp-graph-online
+* https://github.com/flutter/plugins/tree/master/packages/url_launcher/url_launcher
+
 ## Getting started
 
 ```dart
