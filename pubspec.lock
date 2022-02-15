@@ -115,7 +115,7 @@ packages:
       name: flutter_web_auth
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.1"
+    version: "0.4.0"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
@@ -183,7 +183,7 @@ packages:
       name: plugin_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.2"
+    version: "2.1.2"
   sky_engine:
     dependency: transitive
     description: flutter
