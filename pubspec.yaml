@@ -1,6 +1,6 @@
 name: flutter_onedrive
 description: Upload/download files to/from onedrive
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/Lukiya/flutter_onedrive
 
 environment:
