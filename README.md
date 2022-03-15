@@ -24,27 +24,28 @@ import 'package:flutter_onedrive/flutter_onedrive.dart';
 final onedrive = OneDrive(callbackSchema: "your callback schema", clientID: "your client id");
 return FutureBuilder(
   future: onedrive.isConnected(),
-  builder: (context, AsyncSnapshot<bool> snapshot) {
+  builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
     if (!snapshot.hasData) {
       return const Center(child: CircularProgressIndicator());
     }
-    
     if (snapshot.data ?? false) {
       // Has connected
-      // return Some Widgets...
+      return const Text("Connected");
     } else {
       // Hasn't connected
-      final success = await onedrive.connect();
-      if (success) {
-        // Download files
-        final txtBytes = await onedrive.pull("/xxx/xxx.txt");
-        // Upload files
-        await onedrive.push(txtBytes!, "/xxx/xxx.txt");
-      }
-      
-      // return Some Widgets...
+      return MaterialButton(
+        child: const Text("Connect"),
+        onPressed: () async {
+          final success = await onedrive.connect();
+          if (success) {
+            // Download files
+            final txtBytes = await onedrive.pull("/xxx/xxx.txt");
+            // Upload files
+            await onedrive.push(txtBytes!, "/xxx/xxx.txt");
+          }
+        },
+      );
     }
-  }
-)
-
+  },
+);
 ```
