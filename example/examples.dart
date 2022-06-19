@@ -21,7 +21,7 @@ FutureBuilder buildConnectButton(BuildContext context) {
         return MaterialButton(
           child: const Text("Connect"),
           onPressed: () async {
-            final success = await onedrive.connect();
+            final success = await onedrive.connect(context);
             if (success) {
               // Download files
               final txtBytes = await onedrive.pull("/xxx/xxx.txt");

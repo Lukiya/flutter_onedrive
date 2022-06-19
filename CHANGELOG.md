@@ -1,3 +1,7 @@
+## 1.0.3
+
+* Replace flutter_web_auth to oauth_webauth
+
 ## 1.0.2
 
 * Update example
