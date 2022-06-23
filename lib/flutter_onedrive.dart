@@ -13,7 +13,7 @@ import 'dart:convert' show jsonDecode;
 
 import 'token.dart';
 
-class OneDrive {
+class OneDrive with ChangeNotifier {
   static const String authHost = "login.microsoftonline.com";
   static const String authEndpoint = "https://$authHost/common/oauth2/v2.0/authorize";
   static const String tokenEndpoint = "https://$authHost/common/oauth2/v2.0/token";
@@ -110,6 +110,7 @@ class OneDrive {
 //  read token from Response
       if (result != null) {
         await _tokenManager.saveTokenResp(result);
+        notifyListeners();
         return true;
       }
     } on PlatformException catch (err) {
@@ -123,6 +124,7 @@ class OneDrive {
 
   Future<void> disconnect() async {
     await _tokenManager.clearStoredToken();
+    notifyListeners();
   }
 
   Future<Uint8List?> pull(String remotePath) async {
