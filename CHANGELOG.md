@@ -1,3 +1,7 @@
+## 1.1.0
+
+* Added pushStream method
+
 ## 1.0.3
 
 * Replace flutter_web_auth to oauth_webauth

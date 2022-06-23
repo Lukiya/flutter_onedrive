@@ -4,7 +4,7 @@ import 'package:flutter_onedrive/flutter_onedrive.dart';
 void main() {}
 
 FutureBuilder buildConnectButton(BuildContext context) {
-  final onedrive = OneDrive(callbackSchema: "your callback schema", clientID: "your client id");
+  final onedrive = OneDrive(redirectURL: "your redirect URL", clientID: "your client id");
 
   return FutureBuilder(
     future: onedrive.isConnected(),

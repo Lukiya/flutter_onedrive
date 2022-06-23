@@ -22,7 +22,8 @@ import 'package:flutter_onedrive/flutter_onedrive.dart';
 ## Usage
 
 ```dart
-final onedrive = OneDrive(callbackSchema: "your callback schema", clientID: "your client id");
+final onedrive = OneDrive(redirectURL: "your redirect URL", clientID: "your client id");
+
 return FutureBuilder(
   future: onedrive.isConnected(),
   builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
