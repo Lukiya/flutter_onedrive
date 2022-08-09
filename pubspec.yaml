@@ -1,6 +1,6 @@
 name: flutter_onedrive
 description: Upload/download files to/from onedrive
-version: 1.1.0
+version: 1.2.0
 homepage: https://github.com/Lukiya/flutter_onedrive
 
 environment:
@@ -10,9 +10,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_secure_storage: ^5.0.2
-  http: ^0.13.3
-  oauth_webauth: ^2.0.2+7
+  flutter_secure_storage: ^5.1.0
+  http: ^0.13.5
+  oauth_webauth: ^2.2.0+9
 
 dev_dependencies:
   flutter_test:
