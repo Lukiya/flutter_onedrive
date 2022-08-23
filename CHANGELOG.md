@@ -1,23 +1,3 @@
-## 1.1.0
-
-* Added pushStream method
-
-## 1.0.3
-
-* Replace flutter_web_auth to oauth_webauth
-
-## 1.0.2
-
-* Update example
-
-## 1.0.1
+## 1.3.0
 
 * Update dependencies
-
-## 1.0.0-alpha.2
-
-* Fix redirect uri issue
-
-## 1.0.0-alpha.1
-
-* Initialize
