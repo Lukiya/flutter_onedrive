@@ -42,9 +42,11 @@ class DefaultTokenManager extends ITokenManager {
       // final expAt = DateTime.now().toUtc().add(Duration(seconds: tokenObj['expires_in']));
       // debugPrint("# Expres at: $expAt");
 
-      _secureStorage.write(key: _expireKey, value: resp.expiration.toString());
+      _secureStorage.write(key: _expireKey, value: resp.expiration?.toString());
       _secureStorage.write(key: _accessTokenKey, value: resp.accessToken);
       _secureStorage.write(key: _refreshTokenKey, value: resp.refreshToken);
+      // ignore: empty_catches
+    } on NoSuchMethodError {
     } catch (err) {
       debugPrint("# DefaultTokenManager -> _saveTokenMap: $err");
     }

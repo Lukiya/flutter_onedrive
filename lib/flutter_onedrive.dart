@@ -2,7 +2,6 @@ library flutter_onedrive;
 
 import 'dart:convert';
 import 'dart:async';
-import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -68,32 +67,34 @@ class OneDrive with ChangeNotifier {
 
       final result = await OAuthWebScreen.start(
         context: context,
-        authorizationEndpointUrl: authEndpoint,
-        tokenEndpointUrl: tokenEndpoint,
-        // clientSecret: clientSecret,
-        clientId: clientID,
-        redirectUrl: redirectURL,
-        scopes: scopeArray,
-        // promptValues: const ['login'],
-        // loginHint: 'xxx@mail.com',
-        onCertificateValidate: (certificate) {
-          ///This is recommended
-          /// Do certificate validations here
-          /// If false is returned then a CertificateException() will be thrown
-          return true;
-        },
-        // contentLocale: Locale('es'),
-        // refreshBtnVisible: false,
-        // clearCacheBtnVisible: false,
-        // textLocales: {
-        //   ///Optionally texts can be localized
-        //   OAuthWebView.backButtonTooltipKey: 'Ir atrás',
-        //   OAuthWebView.forwardButtonTooltipKey: 'Ir adelante',
-        //   OAuthWebView.reloadButtonTooltipKey: 'Recargar',
-        //   OAuthWebView.clearCacheButtonTooltipKey: 'Limpiar caché',
-        //   OAuthWebView.closeButtonTooltipKey: 'Cerrar',
-        //   OAuthWebView.clearCacheWarningMessageKey: '¿Está seguro que desea limpiar la caché?',
-        // },
+        configuration: OAuthConfiguration(
+          authorizationEndpointUrl: authEndpoint,
+          tokenEndpointUrl: tokenEndpoint,
+          // clientSecret: clientSecret,
+          clientId: clientID,
+          redirectUrl: redirectURL,
+          scopes: scopeArray,
+          // promptValues: const ['login'],
+          // loginHint: 'xxx@mail.com',
+          onCertificateValidate: (certificate) {
+            ///This is recommended
+            /// Do certificate validations here
+            /// If false is returned then a CertificateException() will be thrown
+            return true;
+          },
+          // contentLocale: Locale('es'),
+          // refreshBtnVisible: false,
+          // clearCacheBtnVisible: false,
+          // textLocales: {
+          //   ///Optionally texts can be localized
+          //   OAuthWebView.backButtonTooltipKey: 'Ir atrás',
+          //   OAuthWebView.forwardButtonTooltipKey: 'Ir adelante',
+          //   OAuthWebView.reloadButtonTooltipKey: 'Recargar',
+          //   OAuthWebView.clearCacheButtonTooltipKey: 'Limpiar caché',
+          //   OAuthWebView.closeButtonTooltipKey: 'Cerrar',
+          //   OAuthWebView.clearCacheWarningMessageKey: '¿Está seguro que desea limpiar la caché?',
+          // },
+        ),
       );
 
 // // get code
