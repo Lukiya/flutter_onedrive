@@ -220,10 +220,10 @@ packages:
     dependency: "direct main"
     description:
       name: oauth_webauth
-      sha256: a1e7191a263e4f8245ab2d12b89ef87169feaf8ed3d53c5b8b326f4f46d9b4a1
+      sha256: "9c5fc05efc886828859e5cb0baf62c81c775cd24f45beef002a46f2f88ac6168"
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.0+14"
+    version: "4.0.1+2"
   path:
     dependency: transitive
     description:
@@ -422,5 +422,5 @@ packages:
     source: hosted
     version: "1.0.0"
 sdks:
-  dart: ">=3.0.0-417 <4.0.0"
-  flutter: ">=3.0.0"
+  dart: ">=3.0.0 <4.0.0"
+  flutter: ">=3.3.0"
