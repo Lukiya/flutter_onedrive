@@ -24,9 +24,9 @@ FutureBuilder buildConnectButton(BuildContext context) {
             final success = await onedrive.connect(context);
             if (success) {
               // Download files
-              final txtBytes = await onedrive.pull("/xxx/xxx.txt");
+              final response = await onedrive.pull("/xxx/xxx.txt");
               // Upload files
-              await onedrive.push(txtBytes!, "/xxx/xxx.txt");
+              await onedrive.push(response.bodyBytes!, "/xxx/xxx.txt");
             }
           },
         );
