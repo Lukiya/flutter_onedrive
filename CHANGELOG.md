@@ -1,3 +1,3 @@
-## 1.4.0
+## 1.5.0
 
-* Update dependencies
+* App Folder Feature.
