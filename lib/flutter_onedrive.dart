@@ -5,17 +5,18 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_onedrive/onauth.dart';
 import 'package:flutter_onedrive/onedrive_response.dart';
 // import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:http/http.dart' as http;
-import 'package:oauth_webauth/oauth_webauth.dart';
 import 'dart:convert' show jsonDecode;
 
 import 'token.dart';
 
 class OneDrive with ChangeNotifier {
   static const String authHost = "login.microsoftonline.com";
-  static const String authEndpoint = "https://$authHost/common/oauth2/v2.0/authorize";
+  // static const String authEndpoint = "https://$authHost/common/oauth2/v2.0/authorize";
+  static const String authEndpoint = "/common/oauth2/v2.0/authorize";
   static const String tokenEndpoint = "https://$authHost/common/oauth2/v2.0/token";
   static const String apiEndpoint = "https://graph.microsoft.com/v1.0/";
   static const String errCANCELED = "CANCELED";
@@ -64,55 +65,28 @@ class OneDrive with ChangeNotifier {
     //   'state': state,
     // });
 
-// open browser to authorize endpoint
     try {
-      // final result =
-      //     await FlutterWebAuth.authenticate(url: authUrl.toString(), callbackUrlScheme: callbackSchema);
+// construct auth uri
+      final authUri = Uri.https(authHost, authEndpoint, {
+        'response_type': 'code',
+        'client_id': clientID,
+        'redirect_uri': redirectURL,
+        'scope': scopes,
+        'state': state,
+      });
 
-      final scopeArray = scopes.split(" ");
+      final callbackUrlScheme = Uri.parse(redirectURL).scheme;
 
-      final result = await OAuthWebScreen.start(
+// open browser and do auth
+      final result = await OAuth2Helper.browserAuth(
         context: context,
-        configuration: OAuthConfiguration(
-          authorizationEndpointUrl: authEndpoint,
-          tokenEndpointUrl: tokenEndpoint,
-          // clientSecret: clientSecret,
-          clientId: clientID,
-          redirectUrl: redirectURL,
-          scopes: scopeArray,
-          // promptValues: const ['login'],
-          // loginHint: 'xxx@mail.com',
-          onCertificateValidate: (certificate) {
-            ///This is recommended
-            /// Do certificate validations here
-            /// If false is returned then a CertificateException() will be thrown
-            return true;
-          },
-          // contentLocale: Locale('es'),
-          // refreshBtnVisible: false,
-          // clearCacheBtnVisible: false,
-          // textLocales: {
-          //   ///Optionally texts can be localized
-          //   OAuthWebView.backButtonTooltipKey: 'Ir atrás',
-          //   OAuthWebView.forwardButtonTooltipKey: 'Ir adelante',
-          //   OAuthWebView.reloadButtonTooltipKey: 'Recargar',
-          //   OAuthWebView.clearCacheButtonTooltipKey: 'Limpiar caché',
-          //   OAuthWebView.closeButtonTooltipKey: 'Cerrar',
-          //   OAuthWebView.clearCacheWarningMessageKey: '¿Está seguro que desea limpiar la caché?',
-          // },
-        ),
+        authEndpoint: authUri,
+        tokenEndpoint: Uri.parse(tokenEndpoint),
+        callbackUrlScheme: callbackUrlScheme,
+        clientID: clientID,
+        redirectURL: redirectURL,
+        scopes: scopes,
       );
-
-// // get code
-//       final code = Uri.parse(result).queryParameters['code'];
-
-// // use code to exchange token
-//       final resp = await http.post(Uri.parse(tokenEndpoint), body: {
-//         'client_id': clientID,
-//         'redirect_uri': redirectURL,
-//         'grant_type': 'authorization_code',
-//         'code': code,
-//       });
 
 //  read token from Response
       if (result != null) {
@@ -158,11 +132,24 @@ class OneDrive with ChangeNotifier {
       debugPrint("# OneDrive -> pull: ${resp.statusCode}\n# Body: ${resp.body}");
 
       if (resp.statusCode == 200 || resp.statusCode == 201) {
-        return OneDriveResponse(statusCode: resp.statusCode, body: resp.body, message: "Download successfully.", bodyBytes: resp.bodyBytes, isSuccess: true);
+        return OneDriveResponse(
+            statusCode: resp.statusCode,
+            body: resp.body,
+            message: "Download successfully.",
+            bodyBytes: resp.bodyBytes,
+            isSuccess: true);
       } else if (resp.statusCode == 404) {
-        return OneDriveResponse(statusCode: resp.statusCode, body: resp.body, message: "File not found.", bodyBytes: Uint8List(0));
+        return OneDriveResponse(
+            statusCode: resp.statusCode,
+            body: resp.body,
+            message: "File not found.",
+            bodyBytes: Uint8List(0));
       } else {
-        return OneDriveResponse(statusCode: resp.statusCode, body: resp.body, message: "Error while downloading file.", bodyBytes: Uint8List(0));
+        return OneDriveResponse(
+            statusCode: resp.statusCode,
+            body: resp.body,
+            message: "Error while downloading file.",
+            bodyBytes: Uint8List(0));
       }
     } catch (err) {
       debugPrint("# OneDrive -> pull: $err");
@@ -190,7 +177,8 @@ class OneDrive with ChangeNotifier {
 // create upload session
 // https://docs.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_createuploadsession?view=odsp-graph-online
     var now = DateTime.now();
-    var url = Uri.parse("$apiEndpoint/me/drive/${_getRootFolder(isAppFolder)}:$remotePath:/createUploadSession");
+    var url =
+        Uri.parse("$apiEndpoint/me/drive/${_getRootFolder(isAppFolder)}:$remotePath:/createUploadSession");
     var resp = await http.post(
       url,
       headers: {"Authorization": "Bearer $accessToken"},
@@ -270,7 +258,8 @@ class OneDrive with ChangeNotifier {
 // create upload session
 // https://docs.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_createuploadsession?view=odsp-graph-online
       var now = DateTime.now();
-      var url = Uri.parse("$apiEndpoint/me/drive/${_getRootFolder(isAppFolder)}:$remotePath:/createUploadSession");
+      var url =
+          Uri.parse("$apiEndpoint/me/drive/${_getRootFolder(isAppFolder)}:$remotePath:/createUploadSession");
       var resp = await http.post(
         url,
         headers: {"Authorization": "Bearer $accessToken"},
@@ -315,7 +304,8 @@ class OneDrive with ChangeNotifier {
             continue;
           } else if (resp.statusCode == 200 || resp.statusCode == 201) {
             // upload finished
-            return OneDriveResponse(statusCode: resp.statusCode, body: resp.body, message: "Upload finished.", isSuccess: true);
+            return OneDriveResponse(
+                statusCode: resp.statusCode, body: resp.body, message: "Upload finished.", isSuccess: true);
           } else {
             // has issue
             return OneDriveResponse(statusCode: resp.statusCode, body: resp.body, message: "Upload failed.");
