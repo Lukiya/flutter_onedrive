@@ -5,3 +5,7 @@
 ## 1.6.1
 
 * Refactor, add a helper for fasting switch oauth package.
+
+## 1.6.2
+
+* Update dependencies
