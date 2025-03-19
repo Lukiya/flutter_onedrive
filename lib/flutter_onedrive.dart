@@ -1,4 +1,4 @@
-library flutter_onedrive;
+library;
 
 import 'dart:convert';
 import 'dart:async';
@@ -285,7 +285,7 @@ class OneDrive with ChangeNotifier {
           final contentLength = pageData.length.toString();
 
           final headers = {
-            "Authorization": "Bearer $accessToken",
+            // "Authorization": "Bearer $accessToken",
             "Content-Length": contentLength,
             "Content-Range": range,
           };

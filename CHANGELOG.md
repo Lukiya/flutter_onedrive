@@ -9,3 +9,9 @@
 ## 1.6.2
 
 * Update dependencies
+
+## 1.7.0
+
+* Fixed upload 401 error
+* Update dependencies
+* Update example
