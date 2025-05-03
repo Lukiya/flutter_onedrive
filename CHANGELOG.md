@@ -15,3 +15,10 @@
 * Fixed upload 401 error
 * Update dependencies
 * Update example
+
+## 1.8.0
+
+* Added list files
+* Added file deletion
+* Added create directory
+* Added get file metadata

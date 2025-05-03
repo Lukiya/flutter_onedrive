@@ -1,7 +1,7 @@
 library;
 
-import 'dart:convert';
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,8 +9,7 @@ import 'package:flutter_onedrive/onauth.dart';
 import 'package:flutter_onedrive/onedrive_response.dart';
 // import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert' show jsonDecode;
-
+import 'onedrive_file.dart';
 import 'token.dart';
 
 class OneDrive with ChangeNotifier {
@@ -352,6 +351,141 @@ class OneDrive with ChangeNotifier {
     }
 
     return null;
+  }
+
+  Future<List<OnedriveFile>> listFiles(
+    String path, {
+    bool recursive = false,
+    bool isAppFolder = false,
+  }) async {
+    final accessToken = await _tokenManager.getAccessToken();
+    if (accessToken == null) {
+      throw Exception('Access token is null.');
+    }
+
+    final encodedPath = Uri.encodeComponent(path);
+    final url = Uri.parse(
+      "${apiEndpoint}me/drive/${_getRootFolder(isAppFolder)}:/$encodedPath:/children${recursive ? '?\$expand=children' : ''}",
+    );
+
+    final response = await http.get(
+      url,
+      headers: {"Authorization": "Bearer $accessToken"},
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> json = jsonDecode(response.body);
+      final List<dynamic> items = json['value'] ?? [];
+      return items
+          .map((item) => OnedriveFile.fromJson(item, isAppFolder))
+          .toList();
+    } else {
+      throw Exception('Failed to list files: ${response.statusCode}');
+    }
+  }
+
+  /// Deletes a file from the cloud storage.
+  Future<OneDriveResponse> deleteFile(String path,
+      {bool isAppFolder = false}) async {
+    final accessToken = await _tokenManager.getAccessToken();
+    if (accessToken == null) {
+      throw Exception('Access token is null.');
+    }
+
+    final encodedPath = Uri.encodeComponent(path);
+    final url = Uri.parse(
+      "${apiEndpoint}me/drive/${_getRootFolder(isAppFolder)}:/$encodedPath",
+    );
+
+    try {
+      final resp = await http.delete(
+        url,
+        headers: {"Authorization": "Bearer $accessToken"},
+      );
+
+      if (resp.statusCode == 200 ||
+          resp.statusCode == 201 ||
+          resp.statusCode == 204) {
+        return OneDriveResponse(
+            statusCode: resp.statusCode,
+            body: resp.body,
+            message: "Delete successfully.",
+            bodyBytes: resp.bodyBytes,
+            isSuccess: true);
+      } else if (resp.statusCode == 404) {
+        return OneDriveResponse(
+            statusCode: resp.statusCode,
+            body: resp.body,
+            message: "File not found.",
+            bodyBytes: Uint8List(0));
+      } else {
+        return OneDriveResponse(
+            statusCode: resp.statusCode,
+            body: resp.body,
+            message: "Error while deleting file.",
+            bodyBytes: Uint8List(0));
+      }
+    } catch (err) {
+      debugPrint("# OneDrive -> deleteFile: $err");
+      return OneDriveResponse(message: "Unexpected exception: $err");
+    }
+  }
+
+  /// Creates a new directory in the cloud storage.
+  Future<OneDriveResponse> createDirectory(String path,
+      {bool isAppFolder = false}) async {
+    final accessToken = await _tokenManager.getAccessToken();
+    if (accessToken == null) {
+      throw Exception('Access token is null.');
+    }
+
+    final segments = path.split('/');
+    final folderName = segments.removeLast();
+    final parentPath = segments.join('/');
+
+    final url = parentPath.isEmpty
+        ? Uri.parse(
+            "${apiEndpoint}me/drive/${_getRootFolder(isAppFolder)}/children")
+        : Uri.parse(
+            "${apiEndpoint}me/drive/${_getRootFolder(isAppFolder)}:/$parentPath:/children");
+    try {
+      final resp = await http.post(
+        url,
+        headers: {
+          "Authorization": "Bearer $accessToken",
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode({
+          "name": folderName,
+          "folder": {},
+          "@microsoft.graph.conflictBehavior": "rename",
+        }),
+      );
+
+      if (resp.statusCode == 200 || resp.statusCode == 201) {
+        return OneDriveResponse(
+            statusCode: resp.statusCode,
+            body: resp.body,
+            message: "Create directory successfully.",
+            bodyBytes: resp.bodyBytes,
+            isSuccess: true);
+      } else if (resp.statusCode == 404) {
+        return OneDriveResponse(
+            statusCode: resp.statusCode,
+            body: resp.body,
+            message: "File not found.",
+            bodyBytes: Uint8List(0));
+      } else {
+        return OneDriveResponse(
+            statusCode: resp.statusCode,
+            body: resp.body,
+            message: "Error while creating directory.",
+            bodyBytes: Uint8List(0));
+      }
+    } catch (err) {
+      debugPrint("# OneDrive -> createDirectory: $err");
+      return OneDriveResponse(message: "Unexpected exception: $err");
+    }
   }
 }
 

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_onedrive/flutter_onedrive.dart';
+import 'onedrive_explorer.dart';
 
 class OneDriveButton extends StatefulWidget {
   const OneDriveButton({super.key});
@@ -103,8 +104,46 @@ class OneDriveButtonState extends State<OneDriveButton> with WidgetsBindingObser
                     return;
                   }
 
+                  // Delete files
+                  response = await onedrive.deleteFile('/test/hello.txt');
+                  if (!response.isSuccess) {
+                    debugPrint('🪲[${response.statusCode}] ${response.message}\n🪲${response.body}');
+                    return;
+                  }
+
+                  // Create directory
+                  response = await onedrive.createDirectory('/hello');
+                  if (!response.isSuccess) {
+                    debugPrint('🪲[${response.statusCode}] ${response.message}\n🪲${response.body}');
+                    return;
+                  }
+
+                  // Delete directory
+                  response = await onedrive.deleteFile('/hello');
+                  if (!response.isSuccess) {
+                    debugPrint('🪲[${response.statusCode}] ${response.message}\n🪲${response.body}');
+                    return;
+                  }
+
                   // Success
                   debugPrint('🏆[${response.statusCode}] ${response.message}\n🏆${response.body}');
+                },
+              ),
+
+              const SizedBox(height: 16),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  minimumSize: const Size(200, 48),
+                ),
+                child: const Text("Open explorer", style: TextStyle(fontSize: 16)),
+                onPressed: () async {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => OnedriveExplorerPage(oneDrive: onedrive),
+                  ));
                 },
               ),
             ],
