@@ -2,6 +2,9 @@
 
 * Download files from onedrive
 * Upload files to onedrive
+* List files
+* Create directory
+* Delete files
 
 ## References
 Read below documents before you start using this library:
@@ -41,10 +44,25 @@ return FutureBuilder(
         onPressed: () async {
           final success = await onedrive.connect(context);
           if (success) {
-            // Download files
-            final response = await onedrive.pull("/xxx/xxx.txt");
+            // Create directories
+            OneDriveResponse response = await onedrive.createDirectory("/test");
+            
             // Upload files
-            await onedrive.push(response.bodyBytes!, "/xxx/xxx.txt");
+            const str = "Hello, World!";
+            var data = Uint8List.fromList(utf8.encode(str));
+            response = await onedrive.push(data, "/test/hello.txt");
+            
+            // Download files
+            response = await onedrive.pull("/test/hello.txt");
+
+            // List files
+            final files = await onedrive.listFiles("/test/");
+
+            // Delete files
+            response = await onedrive.deleteFile("/test/hello.txt");
+
+            // Delete directories
+            response = await onedrive.deleteFile("/test");
           }
         },
       );
