@@ -12,7 +12,7 @@ import 'package:permission_handler/permission_handler.dart';
 class OnedriveExplorerPage extends StatefulWidget {
   final OneDrive oneDrive;
 
-  const OnedriveExplorerPage({Key? key, required this.oneDrive}) : super(key: key);
+  const OnedriveExplorerPage({super.key, required this.oneDrive});
 
   @override
   _OnedriveExplorerPageState createState() => _OnedriveExplorerPageState();
@@ -115,35 +115,35 @@ class _OnedriveExplorerPageState extends State<OnedriveExplorerPage> {
     final controller = TextEditingController();
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('New Directory'),
-        content: TextField(
-          controller: controller,
-          decoration: InputDecoration(hintText: 'Directory Name'),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              final dirName = controller.text.trim();
-              if (dirName.isNotEmpty) {
-                final dirPath = path.join(currentPath, dirName);
-                try {
-                  await widget.oneDrive.createDirectory(dirPath);
-                  _loadFiles();
-                } catch (e) {
-                  _showError('Create directory failed: $e');
-                }
-              }
-              Navigator.of(context).pop();
-            },
-            child: Text('Create'),
+      builder:
+          (context) => AlertDialog(
+            title: Text('New Directory'),
+            content: TextField(
+              controller: controller,
+              decoration: InputDecoration(hintText: 'Directory Name'),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () async {
+                  final dirName = controller.text.trim();
+                  if (dirName.isNotEmpty) {
+                    final dirPath = path.join(currentPath, dirName);
+                    try {
+                      await widget.oneDrive.createDirectory(dirPath);
+                      _loadFiles();
+                    } catch (e) {
+                      _showError('Create directory failed: $e');
+                    }
+                  }
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: Text('Create'),
+              ),
+              TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('Cancel')),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('Cancel'),
-          ),
-        ],
-      ),
     );
   }
 
@@ -155,12 +155,15 @@ class _OnedriveExplorerPageState extends State<OnedriveExplorerPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        action: filePath == null ? null : SnackBarAction(
-          label: 'Open',
-          onPressed: () {
-            OpenFile.open(filePath);
-          },
-        ),
+        action:
+            filePath == null
+                ? null
+                : SnackBarAction(
+                  label: 'Open',
+                  onPressed: () {
+                    OpenFile.open(filePath);
+                  },
+                ),
       ),
     );
   }
@@ -189,44 +192,37 @@ class _OnedriveExplorerPageState extends State<OnedriveExplorerPage> {
               onPressed: _createDirectory,
               tooltip: 'New Directory',
             ),
-            IconButton(
-              icon: Icon(Icons.upload_file),
-              onPressed: _uploadFile,
-              tooltip: 'Upload File',
-            ),
-            IconButton(
-              icon: Icon(Icons.refresh),
-              onPressed: _refresh,
-              tooltip: 'Refresh',
-            ),
+            IconButton(icon: Icon(Icons.upload_file), onPressed: _uploadFile, tooltip: 'Upload File'),
+            IconButton(icon: Icon(Icons.refresh), onPressed: _refresh, tooltip: 'Refresh'),
           ],
         ),
-        body: isLoading
-            ? Center(child: CircularProgressIndicator())
-            : files.isEmpty
-            ? Center(child: Text('No files here'))
-            : ListView.builder(
-          itemCount: files.length,
-          itemBuilder: (context, index) {
-            final file = files[index];
-            return ListTile(
-              leading: Icon(file.isFolder ? Icons.folder : Icons.insert_drive_file),
-              title: Text(file.name),
-              subtitle: Text(file.isFolder ? 'Directory' : '${file.size} bytes'),
-              onTap: () {
-                if (file.isFolder) {
-                  _enterDirectory(file);
-                } else {
-                  _downloadFile(file);
-                }
-              },
-              trailing: IconButton(
-                icon: Icon(Icons.delete, color: Colors.red),
-                onPressed: () => _deleteFile(file),
-              ),
-            );
-          },
-        ),
+        body:
+            isLoading
+                ? Center(child: CircularProgressIndicator())
+                : files.isEmpty
+                ? Center(child: Text('No files here'))
+                : ListView.builder(
+                  itemCount: files.length,
+                  itemBuilder: (context, index) {
+                    final file = files[index];
+                    return ListTile(
+                      leading: Icon(file.isFolder ? Icons.folder : Icons.insert_drive_file),
+                      title: Text(file.name),
+                      subtitle: Text(file.isFolder ? 'Directory' : '${file.size} bytes'),
+                      onTap: () {
+                        if (file.isFolder) {
+                          _enterDirectory(file);
+                        } else {
+                          _downloadFile(file);
+                        }
+                      },
+                      trailing: IconButton(
+                        icon: Icon(Icons.delete, color: Colors.red),
+                        onPressed: () => _deleteFile(file),
+                      ),
+                    );
+                  },
+                ),
       ),
     );
   }
