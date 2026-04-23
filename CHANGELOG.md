@@ -26,3 +26,8 @@
 ## 1.8.1
 
 * Fixed: Use "Back" button will return AuthorizationException.
+
+## 1.8.2
+
+* Widened dependency version ranges for better compatibility with downstream packages (e.g. `flutter_secure_storage` v9 and v10 are both supported now).
+* Removed unused `path_provider` dependency.
